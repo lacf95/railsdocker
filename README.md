@@ -10,7 +10,7 @@
 
 1. Clone this repo:
 ```shell
-git clone https://github.com/lacf95/ror-docker-compose-bootstrap.git railsbootstrap
+git clone https://github.com/lacf95/railsbootstrap
 ```
 
 2. Change to the repo's directory:
