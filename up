@@ -8,6 +8,15 @@ U_GID=$(id -g)
 
 export U_NAME U_UID U_GID
 
-echo "[ new ] Starting docker compose services"
+DAEMON="${1}"
+run_as_daemon(){
+  [ "${DAEMON}" == "daemon" ] || [ "${DAEMON}" == "d" ]
+}
 
-docker-compose up
+if run_as_daemon; then
+  echo "[ new ] Starting docker compose services as a daemon"
+  docker-compose down && docker-compose up -d
+else
+  echo "[ new ] Starting docker compose services"
+  docker-compose down && docker-compose up
+fi

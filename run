@@ -2,6 +2,10 @@
 
 set -e
 
+is_not_running(){
+  [ -z `docker-compose ps -q app` ] || [ -z `docker ps -q --no-trunc | grep $(docker-compose ps -q app)` ]
+}
+
 U_NAME=$(whoami)
 U_UID=$(id -u)
 U_GID=$(id -g)
@@ -10,4 +14,8 @@ export U_NAME U_UID U_GID
 
 echo "[ new ] Running docker-compose app service"
 
-docker-compose run --rm -p 3000:3000 -p 3035:3035 app bash
+if is_not_running; then
+  docker-compose down && docker-compose run --rm -p 3000:3000 -p 3035:3035 app bash;
+else
+  docker exec -it "$(docker-compose ps -q app)" bash;
+fi
