@@ -8,7 +8,7 @@ U_GID=$(id -g)
 APP_PATH="${1:-./sample-app}"
 APP_NAME="${APP_PATH##*/}"
 RUBY_VERSION="${2:-2.7.2}"
-RAILS_VERSION="${3:-6.1.4}"
+RAILS_VERSION=
 
 readarray -t A < <(echo "${RUBY_VERSION}" \
   | grep -o "[[:digit:]]\+\.*" | sed "s/\.//g")

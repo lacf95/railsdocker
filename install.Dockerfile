@@ -11,7 +11,7 @@ RUN apk update; \
       less
 
 ARG APP_NAME=sample-app
-ARG RAILS_VERSION=6.1.4
+ARG RAILS_VERSION
 
 ARG U_NAME=docker
 ARG U_UID=1000
@@ -37,6 +37,6 @@ ENV APP_NAME "${APP_NAME}"
 
 WORKDIR "${HOME_PATH}"
 
-RUN gem install "rails:${RAILS_VERSION}"
+RUN [ -z "${RAILS_VERSION}" ] && gem install rails || gem install "rails:${RAILS_VERSION}"
 
 CMD rails new "${APP_NAME}" --database=postgresql --skip-bundle
