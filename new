@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+
+set -e
+
+U_NAME=$(whoami)
+U_UID=$(id -u)
+U_GID=$(id -g)
+APP_NAME="${1:-sample-app}"
+RUBY_VERSION="${2:-2.7.2}"
+RAILS_VERSION="${3:-6.1.4}"
+
+readarray -t A < <(echo "${RUBY_VERSION}" \
+  | grep -o "[[:digit:]]\+\.*" | sed "s/\.//g")
+RUBY_MINOR_VERSION="${A[0]}.${A[1]:-0}.0"
+
+echo "[ new ] Creating new Ruby on Rails application"
+docker build \
+  --build-arg U_NAME="${U_NAME}" \
+  --build-arg U_UID="${U_UID}" \
+  --build-arg U_GID="${U_GID}" \
+  --build-arg APP_NAME="${APP_NAME}" \
+  --build-arg RUBY_VERSION="${RUBY_VERSION}" \
+  --build-arg RAILS_VERSION="${RAILS_VERSION}" \
+  -f install.Dockerfile \
+  -t rails_app:latest .
+
+docker run --name "${APP_NAME}" rails_app:latest
+
+docker cp "${APP_NAME}:/home/${U_NAME}/${APP_NAME}/." "./${APP_NAME}"
+
+docker rm "${APP_NAME}"
+
+echo "[ new ] Generating docker-compose setup"
+
+cp docker-compose.yml Dockerfile \
+  docker-entrypoint.sh .bashrc  .bash_history "./${APP_NAME}"
+
+cp build run up "./${APP_NAME}/bin"
+
+sed -i "s/\${APP_NAME}/${APP_NAME}/g" \
+  "./${APP_NAME}/docker-compose.yml" \
+  "./${APP_NAME}/docker-entrypoint.sh" \
+  "./${APP_NAME}/Dockerfile"
+
+sed -i "s/\${RUBY_VERSION}/${RUBY_VERSION}/g" \
+  "./${APP_NAME}/Dockerfile"
+
+sed -i "s/\${RUBY_MINOR_VERSION}/${RUBY_MINOR_VERSION}/g" \
+  "./${APP_NAME}/Dockerfile"
+
+echo "[ new ] Configuring database credentials"
+
+sed -i "/pool\:/a \ \ username: <%= ENV.fetch(\"DB_USERNAME\") { \"postgres\" } %>" \
+  "./${APP_NAME}/config/database.yml"
+
+sed -i "/pool\:/a \ \ password: <%= ENV.fetch(\"DB_PASSWORD\") { \"password\" } %>" \
+  "./${APP_NAME}/config/database.yml"
+
+sed -i "/pool\:/a \ \ host: <%= ENV.fetch(\"DB_HOST\") { \"localhost\" } %>" \
+  "./${APP_NAME}/config/database.yml"
+
+echo "[ new ] Adding redis to the Gemfile"
+
+sed -i "/gem 'redis'/s/^# //g" \
+  "./${APP_NAME}/Gemfile"
+
+echo "[ new ] Adding bcrypt to the Gemfile"
+
+sed -i "/gem 'bcrypt'/s/^# //g" \
+  "./${APP_NAME}/Gemfile"
+
+echo "[ new ] Adding image_processing to the Gemfile"
+
+sed -i "/gem 'image_processing'/s/^# //g" \
+  "./${APP_NAME}/Gemfile"
+
+echo "[ new ] Done"

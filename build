@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+set -e
+
+U_NAME=$(whoami)
+U_UID=$(id -u)
+U_GID=$(id -g)
+
+export U_NAME U_UID U_GID
+
+echo "[ new ] Building docker-compose services"
+
+docker-compose build
