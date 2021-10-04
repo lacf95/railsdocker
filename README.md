@@ -1,5 +1,14 @@
 # Ruby on Rails docker compose bootstrap
 
+Creates a Ruby on Rails application with configured Docker compose.
+
+It comes with Postgresql and Redis services. Also, uses volumes for:
+* Database persistence.
+* File sharing between the host and container.
+* Cached gems between builds.
+* Script history `.bash_history`
+* Script configuration `.bashrc`.
+
 ## Requirements.
 
 * Install [Docker](https://docs.docker.com/engine/install/) version `	18.06.0+` or newer.
