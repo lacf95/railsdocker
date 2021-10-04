@@ -36,7 +36,7 @@ echo "[ new ] Generating docker-compose setup"
 cp docker-compose.yml Dockerfile \
   docker-entrypoint.sh .bashrc  .bash_history "${APP_PATH}"
 
-cp build run up "${APP_PATH}/bin"
+cp build run up down "${APP_PATH}/bin"
 
 sed -i "s/\${APP_NAME}/${APP_NAME}/g" \
   "${APP_PATH}/docker-compose.yml" \

@@ -58,7 +58,7 @@ exit
 bin/up
 ```
 
-## Additional configuration
+## Commands
 
 ### New command
 The `new` command can receive three positional arguments:
@@ -67,5 +67,16 @@ The `new` command can receive three positional arguments:
 2. The ruby version, use the supported Alpine images from [dockerhub](https://hub.docker.com/_/ruby) (major, minor, and patches without labels).
 3. The rails version, use the supported versions by bundler.
 
+## Project installed commands
+
+### Build command
+The `bin/build` command builds and pulls all Docker compose required images.
+
 ### Up command
-The `up` command can receive one optional argument `d` or `daemon` to run in the background.
+The `bin/up` starts all Docker compose services; it can receive one optional argument `d` or `daemon` to run in the background.
+
+### Run command
+The `bin/run` connects to the running container, if not possible starts a new one.
+
+### Down command
+The `bin/down` command stops and remove service containers.
