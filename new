@@ -2,9 +2,16 @@
 
 set -e
 
-U_NAME=$(whoami)
-U_UID=$(id -u)
-U_GID=$(id -g)
+if [ "$(uname -s)" = "Linux" ]; then
+  U_NAME=$(whoami)
+  U_UID=$(id -u)
+  U_GID=$(id -g)
+else
+  U_NAME=docker
+  U_UID=1000
+  U_GID=1000
+fi
+
 APP_PATH="${1:-./sample-app}"
 APP_NAME="${APP_PATH##*/}"
 RUBY_VERSION="${2:-2.7.2}"
@@ -40,41 +47,53 @@ cp docker-compose.yml Dockerfile \
 
 cp build run up down "${APP_PATH}/bin"
 
-sed -i "s/\${APP_NAME}/${APP_NAME}/g" \
+sed -i.bak "s/\${APP_NAME}/${APP_NAME}/g" \
   "${APP_PATH}/docker-compose.yml" \
   "${APP_PATH}/docker-entrypoint.sh" \
   "${APP_PATH}/Dockerfile"
 
-sed -i "s/\${RUBY_VERSION}/${RUBY_VERSION}/g" \
+rm "${APP_PATH}/docker-compose.yml.bak" \
+  "${APP_PATH}/docker-entrypoint.sh.bak"
+
+sed -i.bak "s/\${RUBY_VERSION}/${RUBY_VERSION}/g" \
   "${APP_PATH}/Dockerfile"
 
-sed -i "s/\${RUBY_MINOR_VERSION}/${RUBY_MINOR_VERSION}/g" \
+sed -i.bak "s/\${RUBY_MINOR_VERSION}/${RUBY_MINOR_VERSION}/g" \
   "${APP_PATH}/Dockerfile"
+
+rm "${APP_PATH}/Dockerfile.bak"
 
 echo "[ new ] Configuring database credentials"
 
-sed -i "/pool\:/a \ \ username: <%= ENV.fetch(\"DB_USERNAME\") { \"postgres\" } %>" \
+sed -i.bak \
+  '/pool\:/a\'$'\n''  username: <%= ENV.fetch("DB_USERNAME") { "postgres" } %>'$'\n''' \
   "${APP_PATH}/config/database.yml"
 
-sed -i "/pool\:/a \ \ password: <%= ENV.fetch(\"DB_PASSWORD\") { \"password\" } %>" \
+sed -i.bak \
+  '/username\:/a\'$'\n''  password: <%= ENV.fetch("DB_PASSWORD") { "password" } %>'$'\n''' \
   "${APP_PATH}/config/database.yml"
 
-sed -i "/pool\:/a \ \ host: <%= ENV.fetch(\"DB_HOST\") { \"localhost\" } %>" \
+sed -i.bak \
+  '/password\:/a\'$'\n''  host: <%= ENV.fetch("DB_HOST") { "localhost" } %>'$'\n''' \
   "${APP_PATH}/config/database.yml"
+
+rm "${APP_PATH}/config/database.yml.bak"
 
 echo "[ new ] Adding redis to the Gemfile"
 
-sed -i "/gem 'redis'/s/^# //g" \
+sed -i.bak "/gem 'redis'/s/^# //g" \
   "${APP_PATH}/Gemfile"
 
 echo "[ new ] Adding bcrypt to the Gemfile"
 
-sed -i "/gem 'bcrypt'/s/^# //g" \
+sed -i.bak "/gem 'bcrypt'/s/^# //g" \
   "${APP_PATH}/Gemfile"
 
 echo "[ new ] Adding image_processing to the Gemfile"
 
-sed -i "/gem 'image_processing'/s/^# //g" \
+sed -i.bak "/gem 'image_processing'/s/^# //g" \
   "${APP_PATH}/Gemfile"
+
+rm "${APP_PATH}/Gemfile.bak"
 
 echo "[ new ] Done"

@@ -2,9 +2,15 @@
 
 set -e
 
-U_NAME=$(whoami)
-U_UID=$(id -u)
-U_GID=$(id -g)
+if [ "$(uname -s)" = "Linux" ]; then
+  U_NAME=$(whoami)
+  U_UID=$(id -u)
+  U_GID=$(id -g)
+else
+  U_NAME=docker
+  U_UID=1000
+  U_GID=1000
+fi
 
 export U_NAME U_UID U_GID
 
