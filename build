@@ -11,3 +11,5 @@ export U_NAME U_UID U_GID
 echo "[ new ] Building docker-compose services"
 
 docker-compose build
+
+docker-compose pull
