@@ -16,9 +16,6 @@ done < <(echo "${RUBY_VERSION}" \
   | grep -o "[[:digit:]]\+\.*" | sed "s/\.//g")
 RUBY_MINOR_VERSION="${A[0]}.${A[1]:-0}.0"
 
-echo $RUBY_MINOR_VERSION
-exit 0
-
 echo "[ new ] Creating new Ruby on Rails application"
 docker build \
   --build-arg U_NAME="${U_NAME}" \
