@@ -70,11 +70,14 @@ bin/up
 ## Commands
 
 ### New command
-The `new` command can receive three positional arguments:
+The `new` command can receive one argument:
 
-1. The path for the new project (required)
-2. The ruby version, use the supported Alpine images from [dockerhub](https://hub.docker.com/_/ruby) (major, minor, and patches without labels).
-3. The rails version, use the supported versions by bundler.
+1. The path for the new project (required).
+
+And two options:
+
+1. `-r` to set the Ruby version.
+1. `-s` to set the Rails version.
 
 ## Project installed commands
 

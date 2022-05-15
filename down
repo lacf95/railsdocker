@@ -2,6 +2,7 @@
 
 set -e
 
+# User info for Non-root installation
 if [ "$(uname -s)" = "Linux" ]; then
   U_NAME=$(whoami)
   U_UID=$(id -u)

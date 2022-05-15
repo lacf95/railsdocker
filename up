@@ -2,6 +2,7 @@
 
 set -e
 
+# User info for Non-root installation
 if [ "$(uname -s)" = "Linux" ]; then
   U_NAME=$(whoami)
   U_UID=$(id -u)
@@ -20,9 +21,9 @@ run_as_daemon(){
 }
 
 if run_as_daemon; then
-  echo "[ new ] Starting docker compose services as a daemon"
+  echo "[ up ] Starting docker compose services as a daemon"
   docker-compose down && docker-compose up -d
 else
-  echo "[ new ] Starting docker compose services"
+  echo "[ up ] Starting docker compose services"
   docker-compose down && docker-compose up
 fi

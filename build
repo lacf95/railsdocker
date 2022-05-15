@@ -2,6 +2,7 @@
 
 set -e
 
+# User info for Non-root installation
 if [ "$(uname -s)" = "Linux" ]; then
   U_NAME=$(whoami)
   U_UID=$(id -u)
@@ -14,7 +15,7 @@ fi
 
 export U_NAME U_UID U_GID
 
-echo "[ new ] Building docker-compose services"
+echo "[ build ] Building docker-compose services"
 
 docker-compose build
 

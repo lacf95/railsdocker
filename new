@@ -2,6 +2,31 @@
 
 set -e
 
+# Arguments processing
+RUBY_VERSION="2.7.2"
+RAILS_VERSION=
+
+while getopts "r:s:" flag; do
+  case "${flag}" in
+    r) RUBY_VERSION="${OPTARG}" ;;
+    s) RAILS_VERSION="${OPTARG}" ;;
+    *) ;;
+  esac
+done
+
+shift "$((OPTIND - 1))"
+
+APP_PATH="${1:-./sample-app}"
+APP_NAME="${APP_PATH##*/}"
+
+# Extract Ruby minor version
+while IFS=\= read line; do
+    A+=($line)
+done < <(echo "${RUBY_VERSION}" \
+  | grep -o "[[:digit:]]\+\.*" | sed "s/\.//g")
+RUBY_MINOR_VERSION="${A[0]}.${A[1]:-0}.0"
+
+# User info for Non-root installation
 if [ "$(uname -s)" = "Linux" ]; then
   U_NAME=$(whoami)
   U_UID=$(id -u)
@@ -12,18 +37,7 @@ else
   U_GID=1000
 fi
 
-APP_PATH="${1:-./sample-app}"
-APP_NAME="${APP_PATH##*/}"
-RUBY_VERSION="${2:-2.7.2}"
-RAILS_VERSION=
-
-while IFS=\= read line; do
-    A+=($line)
-done < <(echo "${RUBY_VERSION}" \
-  | grep -o "[[:digit:]]\+\.*" | sed "s/\.//g")
-RUBY_MINOR_VERSION="${A[0]}.${A[1]:-0}.0"
-
-echo "[ new ] Creating new Ruby on Rails application"
+echo "[ railsdocker ] Creating new Ruby on Rails application"
 docker build \
   --build-arg U_NAME="${U_NAME}" \
   --build-arg U_UID="${U_UID}" \
@@ -40,7 +54,7 @@ docker cp "${APP_NAME}:/home/${U_NAME}/${APP_NAME}/." "${APP_PATH}"
 
 docker rm "${APP_NAME}"
 
-echo "[ new ] Generating docker-compose setup"
+echo "[ railsdocker ] Generating docker-compose setup"
 
 cp docker-compose.yml Dockerfile \
   docker-entrypoint.sh .bashrc  .bash_history "${APP_PATH}"
@@ -63,7 +77,7 @@ sed -i.bak "s/\${RUBY_MINOR_VERSION}/${RUBY_MINOR_VERSION}/g" \
 
 rm "${APP_PATH}/Dockerfile.bak"
 
-echo "[ new ] Configuring database credentials"
+echo "[ railsdocker ] Configuring database credentials"
 
 sed -i.bak \
   '/pool\:/a\'$'\n''  username: <%= ENV.fetch("DB_USERNAME") { "postgres" } %>'$'\n''' \
@@ -79,21 +93,21 @@ sed -i.bak \
 
 rm "${APP_PATH}/config/database.yml.bak"
 
-echo "[ new ] Adding redis to the Gemfile"
+echo "[ railsdocker ] Adding redis to the Gemfile"
 
 sed -i.bak "/gem 'redis'/s/^# //g" \
   "${APP_PATH}/Gemfile"
 
-echo "[ new ] Adding bcrypt to the Gemfile"
+echo "[ railsdocker ] Adding bcrypt to the Gemfile"
 
 sed -i.bak "/gem 'bcrypt'/s/^# //g" \
   "${APP_PATH}/Gemfile"
 
-echo "[ new ] Adding image_processing to the Gemfile"
+echo "[ railsdocker ] Adding image_processing to the Gemfile"
 
 sed -i.bak "/gem 'image_processing'/s/^# //g" \
   "${APP_PATH}/Gemfile"
 
 rm "${APP_PATH}/Gemfile.bak"
 
-echo "[ new ] Done"
+echo "[ railsdocker ] Done"
