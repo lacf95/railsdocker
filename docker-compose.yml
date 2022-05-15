@@ -7,11 +7,15 @@ services:
       POSTGRES_PASSWORD: password
     volumes:
       - pg_data:/var/lib/postgresql/data
+    stdin_open: true
+    tty: true
 
   redis:
     image: redis:6.2.5-alpine
     volumes:
       - redis_data:/data
+    stdin_open: true
+    tty: true
 
   app:
     build:
@@ -40,6 +44,9 @@ services:
       - .:/home/${U_NAME}/${APP_NAME}
       - ./.bashrc:/home/${U_NAME}/.bashrc
       - ./.bash_history:/home/${U_NAME}/.bash_history
+      - ./.irb_history:/home/${U_NAME}/.irb_history
+    stdin_open: true
+    tty: true
 
 volumes:
   pg_data:

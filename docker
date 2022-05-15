@@ -1,0 +1,81 @@
+#!/usr/bin/env bash
+
+# User info for Non-root installation
+if [ "$(uname -s)" = "Linux" ]; then
+  U_NAME=$(whoami)
+  U_UID=$(id -u)
+  U_GID=$(id -g)
+else
+  U_NAME=docker
+  U_UID=1000
+  U_GID=1000
+fi
+
+export U_NAME U_UID U_GID
+
+# Functions
+compose_run(){
+  docker-compose "${@}"
+}
+
+is_not_running(){
+  local service container
+  service="${1}"
+  container="$(compose_run ps --quiet --all "${service}")"
+  [ -z "${container}" ] || ! grep -q "${container}" <(docker ps --quiet --no-trunc)
+}
+
+execute_in_container(){
+  if is_not_running "${1}"; then
+    compose_run down
+    compose_run run --rm -p 3000:3000 -p 3035:3035 "${1}" "${@: 2}"
+  else
+    docker exec -it "$(compose_run ps --quiet --all "${1}")" "${@: 2}"
+  fi
+}
+
+# Arguments processing
+cmd="${1}"
+service="${2:-app}"
+
+case "${cmd}" in
+  "up")
+    if [[ "${2}" == --daemon ]]; then
+      compose_run down
+      compose_run up --daemon
+    else
+      compose_run down
+      compose_run up
+    fi
+    ;;
+
+  "build")
+    if [[ "${2}" == --no-cache ]]; then
+      compose_run build --no-cache
+      compose_run pull
+    else
+      compose_run build
+      compose_run pull
+    fi
+    ;;
+
+  "down")
+    compose_run down
+    ;;
+
+  "restart")
+    compose_run restart "${service}"
+    ;;
+
+  "bash")
+    execute_in_container "${service}" bash
+    ;;
+
+  "attach")
+    docker attach "$(compose_run ps --quiet --all "${service}")"
+    ;;
+
+  *)
+    echo "Command \"${cmd}\" not found"
+    ;;
+esac

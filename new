@@ -57,9 +57,9 @@ docker rm "${APP_NAME}"
 echo "[ railsdocker ] Generating docker-compose setup"
 
 cp docker-compose.yml Dockerfile \
-  docker-entrypoint.sh .bashrc  .bash_history "${APP_PATH}"
+  docker-entrypoint.sh .bashrc .bash_history .irb_history "${APP_PATH}"
 
-cp build run up down "${APP_PATH}/bin"
+cp ./docker "${APP_PATH}/bin"
 
 sed -i.bak "s/\${APP_NAME}/${APP_NAME}/g" \
   "${APP_PATH}/docker-compose.yml" \

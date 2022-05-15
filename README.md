@@ -42,12 +42,12 @@ cd ~/rails_app_name
 
 5. Build your new app services:
 ```shell
-bin/build
+bin/docker build
 ```
 
-6. Run your app so you can configure the database, and install webpacker:
+6. Run your app so you can configure the database, and install webpacker (optional):
 ```shell
-bin/run
+bin/docker bash # Or bin/docker bash app
 ```
 
 ```shell
@@ -64,7 +64,7 @@ exit
 
 7. Finally, start all services:
 ```shell
-bin/up
+bin/docker up
 ```
 
 ## Commands
@@ -82,13 +82,16 @@ And two options:
 ## Project installed commands
 
 ### Build command
-The `bin/build` command builds and pulls all Docker compose required images.
+The `bin/docker build` command builds and pulls all Docker compose required images; it can receive one option `--no-cache` to build from zero.
 
 ### Up command
-The `bin/up` starts all Docker compose services; it can receive one optional argument `d` or `daemon` to run in the background.
+The `bin/docker up` starts all Docker compose services; it can receive one option `--daemon` to run in the background.
 
 ### Run command
-The `bin/run` connects to the running container, if not possible starts a new one.
+The `bin/docker bash [service:-app]` connects to the running container, if not possible starts a new one.
+
+### Run command
+The `bin/docker attach [service:-app]` attach to the running container's STDIN, STDOUT, and STDERR, useful when prying on your server.
 
 ### Down command
-The `bin/down` command stops and remove service containers.
+The `bin/docker down` command stops and remove service containers.
