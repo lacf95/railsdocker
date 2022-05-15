@@ -13,6 +13,7 @@ RUN apk update; \
       yarn \
       less \
       imagemagick \
+      gcompat \
       chromium \
       chromium-chromedriver
 
