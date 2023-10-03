@@ -46,13 +46,16 @@ docker build \
   --build-arg RUBY_VERSION="${RUBY_VERSION}" \
   --build-arg RAILS_VERSION="${RAILS_VERSION}" \
   -f install.Dockerfile \
-  -t new_rails:latest .
+  -t railsdocker:latest .
 
-docker run --name "${APP_NAME}" new_rails:latest
+docker run --name "${APP_NAME}" railsdocker:latest
 
 docker cp "${APP_NAME}:/home/${U_NAME}/${APP_NAME}/." "${APP_PATH}"
 
+# Ensures the container is removed
+set +e
 docker rm "${APP_NAME}"
+set -e
 
 echo "[ railsdocker ] Generating docker compose setup"
 
@@ -95,17 +98,17 @@ rm "${APP_PATH}/config/database.yml.bak"
 
 echo "[ railsdocker ] Adding redis to the Gemfile"
 
-sed -i.bak "/gem 'redis'/s/^# //g" \
+sed -i.bak "/gem \"redis\"/s/^# //g" \
   "${APP_PATH}/Gemfile"
 
 echo "[ railsdocker ] Adding bcrypt to the Gemfile"
 
-sed -i.bak "/gem 'bcrypt'/s/^# //g" \
+sed -i.bak "/gem \"bcrypt\"/s/^# //g" \
   "${APP_PATH}/Gemfile"
 
 echo "[ railsdocker ] Adding image_processing to the Gemfile"
 
-sed -i.bak "/gem 'image_processing'/s/^# //g" \
+sed -i.bak "/gem \"image_processing\"/s/^# //g" \
   "${APP_PATH}/Gemfile"
 
 rm "${APP_PATH}/Gemfile.bak"
