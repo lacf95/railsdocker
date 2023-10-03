@@ -3,7 +3,7 @@
 set -e
 
 is_not_running(){
-  [ -z `docker-compose ps -q app` ] || [ -z `docker ps -q --no-trunc | grep $(docker-compose ps -q app)` ]
+  [ -z `docker compose ps -q app` ] || [ -z `docker ps -q --no-trunc | grep $(docker compose ps -q app)` ]
 }
 
 # User info for Non-root installation
@@ -19,10 +19,10 @@ fi
 
 export U_NAME U_UID U_GID
 
-echo "[ run ] Running docker-compose app service"
+echo "[ run ] Running docker compose app service"
 
 if is_not_running; then
-  docker-compose down && docker-compose run --rm -p 3000:3000 -p 3035:3035 app bash;
+  docker compose down && docker compose run --rm -p 3000:3000 -p 3035:3035 app bash;
 else
-  docker exec -it "$(docker-compose ps -q app)" bash;
+  docker exec -it "$(docker compose ps -q app)" bash;
 fi

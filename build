@@ -15,8 +15,8 @@ fi
 
 export U_NAME U_UID U_GID
 
-echo "[ build ] Building docker-compose services"
+echo "[ build ] Building docker compose services"
 
-docker-compose build
+docker compose build
 
-docker-compose pull
+docker compose pull

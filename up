@@ -22,8 +22,8 @@ run_as_daemon(){
 
 if run_as_daemon; then
   echo "[ up ] Starting docker compose services as a daemon"
-  docker-compose down && docker-compose up -d
+  docker compose down && docker compose up -d
 else
   echo "[ up ] Starting docker compose services"
-  docker-compose down && docker-compose up
+  docker compose down && docker compose up
 fi
