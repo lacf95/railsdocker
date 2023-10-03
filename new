@@ -3,7 +3,7 @@
 set -e
 
 # Arguments processing
-RUBY_VERSION="2.7.2"
+RUBY_VERSION="3.1.4"
 RAILS_VERSION=
 
 while getopts "r:s:" flag; do
