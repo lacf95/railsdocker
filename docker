@@ -15,7 +15,7 @@ export U_NAME U_UID U_GID
 
 # Functions
 compose_run(){
-  docker-compose "${@}"
+  docker compose "${@}"
 }
 
 is_not_running(){

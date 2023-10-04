@@ -66,4 +66,4 @@ RUN yarn install --check-files
 EXPOSE 3000:3000
 EXPOSE 3035:3035
 
-CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0", "-p", "3000"]
+CMD ["bin/rails", "server", "-b", "0.0.0.0", "-p", "3000"]

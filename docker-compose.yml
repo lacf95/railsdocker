@@ -25,8 +25,9 @@ services:
         U_NAME: $U_NAME
         U_UID: $U_UID
         U_GID: $U_GID
-    command: "bundle exec rails server -b 0.0.0.0 -p 3000"
+    command: "bin/rails server -b 0.0.0.0 -p 3000"
     entrypoint: "/home/${U_NAME}/${APP_NAME}/docker-entrypoint.sh"
+    hostname: "${APP_NAME}"
     ports:
       - '3000:3000'
       - '3035:3035'
