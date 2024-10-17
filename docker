@@ -40,9 +40,9 @@ service="${2:-app}"
 
 case "${cmd}" in
   "up")
-    if [[ "${2}" == --daemon ]]; then
+    if [[ "${2}" == --detach ]]; then
       compose_run down
-      compose_run up --daemon
+      compose_run up --detach
     else
       compose_run down
       compose_run up
@@ -69,6 +69,10 @@ case "${cmd}" in
 
   "bash")
     execute_in_container "${service}" bash
+    ;;
+
+  "logs")
+    compose_run logs "${service}"
     ;;
 
   "attach")

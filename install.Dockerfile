@@ -1,4 +1,4 @@
-ARG RUBY_VERSION=3.1.4
+ARG RUBY_VERSION=3.3.5
 
 FROM ruby:${RUBY_VERSION}-alpine
 
@@ -12,6 +12,7 @@ RUN apk update; \
 
 ARG APP_NAME=sample-app
 ARG RAILS_VERSION
+ARG JAVASCRIPT_APPROACH
 
 ARG U_NAME=docker
 ARG U_UID=1000
@@ -32,11 +33,12 @@ RUN adduser \
 
 USER "${U_UID}:${U_GID}"
 
-ENV HOME_PATH "/home/${U_NAME}"
-ENV APP_NAME "${APP_NAME}"
+ENV HOME_PATH="/home/${U_NAME}"
+ENV APP_NAME="${APP_NAME}"
+ENV JAVASCRIPT_APPROACH="${JAVASCRIPT_APPROACH}"
 
 WORKDIR "${HOME_PATH}"
 
 RUN [ -z "${RAILS_VERSION}" ] && gem install rails || gem install "rails:${RAILS_VERSION}"
 
-CMD rails new "${APP_NAME}" --database=postgresql --skip-bundle
+CMD ["/bin/sh", "-c", "rails new \"${APP_NAME}\" \"--database=postgresql\" --javascript=\"${JAVASCRIPT_APPROACH}\" --skip-bundle"]

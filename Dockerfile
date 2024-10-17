@@ -36,19 +36,19 @@ RUN adduser \
 
 USER "${U_UID}:${U_GID}"
 
-ENV EDITOR vim
+ENV EDITOR="vim"
 
-ENV HOME_PATH "/home/${U_NAME}"
+ENV HOME_PATH="/home/${U_NAME}"
 
-ENV GEM_HOME "${HOME_PATH}/ruby_gems"
-ENV GEM_PATH "${GEM_HOME}"
-ENV BUNDLE_PATH "${GEM_HOME}"
+ENV GEM_HOME="${HOME_PATH}/ruby_gems"
+ENV GEM_PATH="${GEM_HOME}"
+ENV BUNDLE_PATH="${GEM_HOME}"
 
-ENV PATH "${GEM_HOME}/bin:${GEM_HOME}/ruby/${RUBY_MINOR_VERSION}/bin:${PATH}"
+ENV PATH="${GEM_HOME}/bin:${GEM_HOME}/ruby/${RUBY_MINOR_VERSION}/bin:${PATH}"
 
 RUN mkdir -p "${GEM_HOME}"
 
-ENV APP_PATH "${HOME_PATH}/${APP_NAME}"
+ENV APP_PATH="${HOME_PATH}/${APP_NAME}"
 
 COPY --chown="${U_UID}:${U_GID}" . "${APP_PATH}"
 
@@ -57,9 +57,7 @@ WORKDIR "${APP_PATH}"
 RUN gem install bundler
 RUN git config --global http.sslVerify false
 
-RUN bundle install \
-      --jobs `expr $(cat /proc/cpuinfo | grep -c "cpu cores") - 1` \
-      --retry 3
+RUN bundle install --jobs "$(nproc)" --retry 3
 
 RUN yarn install --check-files
 

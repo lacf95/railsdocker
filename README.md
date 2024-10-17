@@ -78,6 +78,7 @@ And two options:
 
 1. `-r` to set the Ruby version.
 1. `-s` to set the Rails version.
+1. `-j` to set the Javascript approach.
 
 ## Project installed commands
 
